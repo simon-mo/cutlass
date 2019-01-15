@@ -5,8 +5,8 @@
 #include "cutlass/gemm/gemm.h"
 #include "cutlass/gemm/sgemm_traits.h"
 
-#include "gemm_helper.h"
-#include "timing_helper.h"
+#include "../gemm_helper.h"
+#include "../timing_helper.h"
 
 cudaError_t CutlassSgemmNN(
     int M,

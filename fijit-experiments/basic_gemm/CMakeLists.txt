@@ -1,7 +1,3 @@
-set(EXAMPLES_BASIC_CUTLASS_GEMM_SOURCES
-  
-)
-
 if (NOT CUTLASS_NATIVE_CUDA)
   # cuda_add_executable does not take interface include directories into account
   # Let's fetch them and pass them to CUDA.
@@ -31,11 +27,10 @@ foreach(K IN LISTS SCALE_K)
 	foreach(N IN LISTS SCALE_N)
 		foreach(M IN LISTS SCALE_M)
   cutlass_add_executable(
-	  gemm_r_${R}_k_${K}_n_${N}_m_${M}
+    gemm_r_${R}_k_${K}_n_${N}_m_${M}
     basic_gemm.cu
     OPTIONS "-DRATIO=${R} -DSCALE_K=${K} -DSCALE_N=${N} -DSCALE_M=${M}"
   )
-  target_link_libraries(gemm_r_${R}_k_${K}_n_${N}_m_${M} experiment_helpers) 
 endforeach()
 endforeach()
 endforeach()
