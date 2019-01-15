@@ -28,9 +28,9 @@ cudaError_t CutlassSgemmNN(
   typedef cutlass::gemm::SgemmTraits<
       cutlass::MatrixLayout::kColumnMajor,
       cutlass::MatrixLayout::kColumnMajor,
-      cutlass::Shape<8, 64*SCALING_PARAM, 128>,
-      LinearScaling<float>,
-      Shape<8, 8*SCALING_PARAM, 8>
+      cutlass::Shape<4*SCALE_K, RATIO*SCALE_N, RATIO*SCALE_M>,
+      cutlass::gemm::LinearScaling<float>,
+      cutlass::Shape<4*SCALE_K, 1*SCALE_N, 1*SCALE_M>
       >
       GemmTraits;
 
@@ -67,14 +67,11 @@ cudaError_t CutlassSgemmNN(
 
 cudaError_t TestCutlassGemm(int M, int N, int K, float alpha, float beta, int n_stream, int n_kernel_per_stream)
 {
-  cudaError_t result;
   Timer timer;
 
   int lda = M;
   int ldb = K;
   int ldc = M;
-
-  size_t sizeof_C = sizeof(float) * ldc * N;
 
   float *A;
   float *B;
@@ -98,19 +95,18 @@ cudaError_t TestCutlassGemm(int M, int N, int K, float alpha, float beta, int n_
   long long duration = timer.finish_and_get_us();
   std::cout << "us: " << duration << std::endl;
 
-  cudaFree(C_reference);
   cudaFree(C_cutlass);
   cudaFree(B);
   cudaFree(A);
 
-  return result;
+  return cudaGetLastError();
 }
 
 int main(int argc, const char *arg[])
 {
 
   int problem[3] = {128, 128, 128};
-  float scalars[2] = {3.14, 1.59};
+  float scalars[2] = {1, 1};
   int config[2] = {1, 1};
 
   // Problems parsing M, N, K
